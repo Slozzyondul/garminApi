@@ -1,0 +1,70 @@
+Steps (brief)
+
+Create Garmin OAuth2 app (partner access required) and set redirect URI to e.g. http://localhost:5000/callback
+Run a small Flask app to complete the authorization code flow and save tokens
+Run a Python script to fetch Garmin data and POST it to an n8n webhook
+
+
+Quick run (PowerShell)
+
+Set env vars:
+$env:GARMIN_CLIENT_ID="your_id"
+$env:GARMIN_CLIENT_SECRET="your_secret"
+$env:GARMIN_REDIRECT_URI="http://localhost:5000/callback"
+$env:N8N_WEBHOOK_URL="https://your-n8n.example/webhook/yourpath"
+Install deps:
+python -m pip install flask requests
+Start auth app:
+python main.py
+Open http://localhost:5000/ in browser, approve, callback saves garmin_tokens.json
+Run fetch/post:
+python dataFetch.py
+Notes
+
+Garmin Health API requires partner approval — endpoints will fail without valid credentials.
+Adjust scopes and endpoints (heart-rate, sleep) as needed.
+In production, store tokens securely and handle errors/retries.
+If you want, I can provide an n8n workflow that receives the webhook and continues processing.
+
+
+
+GitHub Copilot
+
+Steps to get Garmin Health API credentials (client_id / client_secret)
+
+Create a Garmin developer account
+Go to Garmin Developer → Health API: https://developer.garmin.com/health-api/
+Sign up / sign in with your Garmin developer account.
+Apply for Health API partner access
+The Health API is a partner program (commercial). On the Health API page click “Get Started” or “Contact Us / Request Access”.
+Fill the application: company name, website, product/use-case, expected data volume, contacts, legal/privacy compliance details.
+Wait for approval and paperwork
+Garmin reviews requests and may require an NDA / MSA. Approval times vary (days → weeks).
+After approval you’ll receive instructions and access to the Garmin Health developer portal (and possibly a sandbox).
+Create an OAuth application in the portal
+Log into the Garmin Health/Partner portal.
+Find the Applications / Clients section and create a new OAuth client:
+Provide application name and allowed redirect URI(s) (use HTTPS; for local testing use ngrok or localhost only if allowed).
+Choose scopes you need (activities, heart rate, sleep, etc.).
+The portal will show client_id and client_secret. Copy them and store securely.
+Test in sandbox / staging
+Use the provided sandbox or staging endpoints (if Garmin provides them) to validate your OAuth flow and API calls before production.
+Production rollout
+When ready, move to production credentials (or request production activation as instructed).
+Follow Garmin’s rate-limit, privacy and data handling requirements.
+Quick tips
+
+Redirect URIs should be exact matches and HTTPS in production. For local dev use ngrok and add its URL as a redirect.
+Store client_secret in a secure store (Key Vault, environment variables). Never commit to source control.
+If you only need a single personal account’s data and cannot get partner access, Garmin Connect has no supported public API — reverse-engineered methods are unsupported and discouraged.
+
+
+
+Useful links
+
+Garmin Health API main page / docs: https://developer.garmin.com/health-api/
+OAuth endpoints (once you have credentials): Authorization: https://connectapi.garmin.com/oauth2/authorize Token: https://connectapi.garmin.com/oauth2/token
+If you want, tell me:
+
+whether you already have a Garmin developer account, and
+if you need ngrok commands to test localhost redirects — I’ll provide step-by-step commands and a short Flask example to complete the OAuth flow.
