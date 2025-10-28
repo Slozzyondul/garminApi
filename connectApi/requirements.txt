@@ -1,0 +1,15 @@
+setuptools
+wheel
+Flask
+flask-cors
+flask-session
+garminconnect==0.2.9
+fitparse==1.2.0
+pandas
+numpy
+python-dotenv==1.0.0
+requests
+pyusb==1.2.1
+openant==1.2.0
+mitmproxy==10.0.0
+redis==4.6.0

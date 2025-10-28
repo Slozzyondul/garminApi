@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Recent Activities</h2>
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% elif activities %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Date</th>
+                        <th>Activity</th>
+                        <th>Duration</th>
+                        <th>Distance</th>
+                        <th>Calories</th>
+                        <th>Avg HR</th>
+                        <th>Pace</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for activity in activities %}
+                    <tr>
+                        <td>{{ activity.startTimeLocal.split(' ')[0] }}</td>
+                        <td>{{ activity.activityName }}</td>
+                        <td>{{ (activity.duration / 60) | round | int }} min</td>
+                        <td>{{ '%.2f'| format(activity.distance / 1000) }} km</td>
+                        <td>{{ activity.calories | int }}</td>
+                        <td>{{ activity.averageHR | int if activity.averageHR else '-' }} bpm</td>
+                        <td>{{ activity.pace if activity.pace else '-' }} /km</td>
+                        <td>
+                            <a href="{{ url_for('api.download_activity', activity_id=activity.activityId, format='FIT') }}" class="btn btn-sm btn-outline-primary">
+                                Download
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">No activities found.</div>
+    {% endif %}
+</div>
+
+<script>
+    // We no longer need the JavaScript fetch for this page,
+    // but we keep the main.js file for other functionalities like logout.
+</script>
+
+{% endblock %}
